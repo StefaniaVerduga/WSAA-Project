@@ -121,7 +121,6 @@ class perfumeDAO:
                 value = result[i]
                 perfume[colName]= value
             return perfume
-
   
 # creates a new class
 perfumeDAO = perfumeDAO()    

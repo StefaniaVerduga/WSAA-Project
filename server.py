@@ -12,17 +12,20 @@ def home():
     return "Welcome to the perfumes' world!"
 
 # Gets all data from the database
-@app.route('/home')
+# curl http://127.0.0.1:5000/perfumes
+@app.route('/perfumes')
 def getAll():
     return jsonify(dao.getAll())
 
 # Get data specified by id
-@app.route("/home/<id>")
+# curl http://127.0.0.1:5000/perfumes/1
+@app.route("/perfumes/<id>")
 def findByID(id):
     return jsonify(dao.findById(id))
 
 # Add new record to the database
-@app.route('/home', methods=['POST'])
+# curl -X POST -H "Content-Type: application/json" -d "{\"Brand\":\"CK\", \"Gender\":\"F\", \"Name\":\"Eternity\", \"Price_eur\":36, \"Size_ml\":100}" http://127.0.0.1:5000/perfumes
+@app.route('/perfumes', methods=['POST'])
 def createPerfume():
     if not request.json:
         abort(400)
@@ -36,7 +39,8 @@ def createPerfume():
     return jsonify(dao.create(data))
 
 # Update database from the webpage
-@app.route('/home/<id>', methods=['PUT'])
+# curl -X PUT -H "Content-Type: application/json" -d "{\"Brand\":\"CK\", \"Gender\":\"F\", \"Name\":\"Eternity\", \"Price_eur\":36, \"Size_ml\":85}" http://127.0.0.1:5000/perfumes/11
+@app.route('/perfumes/<id>', methods=['PUT'])
 def updatePerfume(id):
     foundPerfume = dao.findById(id)
     if len(foundPerfume) == 0:
@@ -56,7 +60,8 @@ def updatePerfume(id):
     return jsonify(currentPerfume)
 
 # Delete by id
-@app.route('/home/<id>', methods=['DELETE'])
+# curl -X DELETE  http://127.0.0.1:5000/perfumes/11
+@app.route('/perfumes/<id>', methods=['DELETE'])
 def deletePerfume(id):
     foundPerfume = dao.findById(id)
     if len(foundPerfume) == 0:
@@ -65,5 +70,5 @@ def deletePerfume(id):
     return jsonify({"done": True})
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8080)
+    app.run(debug=True)
 

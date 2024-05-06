@@ -7,7 +7,7 @@ USE perfumes_db:
 
 -- Create the table perfumes within the database
 CREATE TABLE perfumes (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     Name VARCHAR(50),
     Brand VARCHAR(50),
     Size_ml INT,
@@ -16,7 +16,7 @@ CREATE TABLE perfumes (
     );
 
 -- Add all the initial data corresponding to the attributes
-INSERT INTO perfumes (ID, Name, Brand, Size_ml, Price_eur, Gender) VALUES
+INSERT INTO perfumes (id, Name, Brand, Size_ml, Price_eur, Gender) VALUES
 (1, 'Paradoxe', 'Prada', 90, 148, 'F'),
 (2, 'Good Girl', 'Carolina Herrera', 80, 139, 'F'),
 (3, 'Idole', 'Lancome', 100, 141, 'F'),
