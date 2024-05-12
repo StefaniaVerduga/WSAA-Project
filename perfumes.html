@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>View perfumes</title>
+    </head>
+    <body>
+        <h1>Perfumes</h1>
+        <div><button id="button-showCreate" onclick="showCreate()">Create a perfume</button><br/><br/></div>
+        <div>
+            <table border="1" id="perfumeTable">
+                <tr>
+                        <th>id</th>
+                        <th>Name</th>
+                        <th>Brand</th>
+                        <th>Size_ml</th>
+                        <th>Price_eur</th>
+                        <th>Gender</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                </tr>
+                <tr id="1">
+                    <td>1</td>
+                    <td>Paradoxe</td>
+                    <td>Prada</td>
+                    <td>90</td>
+                    <td>148</td>
+                    <td>F</td>
+                    <td><button onclick="showUpdate(this)">update</button></td>
+                    <td><button onclick="doDelete(this)">delete</button></td>
+                   
+            </tr>
+
+        </table>
+        <br/>
+        </div>
+        <div>
+            <!-- spans are like divs but do not go onto a new line -->
+            <h2><span>Create a</span> <span style="display:none">Update this</span> Perfume</h2>
+            id <input type="text" name="id"><br/>
+            Name <input type="text" name="name"><br/>
+            Brand <input type="text" name="brand"><br/>
+            Size_ml <input type="number" name="size_ml"><br/>
+            Price_eur <input type="number" name="price_eur"><br/>
+            Gender <input type="text" name="gender"><br/>
+            Just to show select <select name="status">
+                <option value="instock">in stock</option>
+                <option value="outstock">out of stock</option>
+                <option value="other">out of print</option>
+            </select><br/>
+            <span><button>Create</button></span>
+ 			<span><button style="display:none">Update</button></span>
+             <!-- "display:none" will make it hidden-->
+
+
+        </div>
+        
+    </body>
+</html>
