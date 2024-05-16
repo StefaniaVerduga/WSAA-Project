@@ -44,19 +44,20 @@ class perfumeDAO:
     # Function to create a new record in the database
     def create(self, data):
         cursor = self.getCursor()
-        sql =  f"insert into {self.table} (Name,Brand,Size_ml,Price_eur,Gender) values (%s,%s,%s,%s,%s)"
-        values = [
+        sql =  "INSERT INTO perfumes (Name,Brand,Size_ml,Price_eur,Gender) VALUES (%s,%s,%s,%s,%s)"
+        values = (
             data["Name"],
             data["Brand"],
             data["Size_ml"],
             data["Price_eur"],
             data["Gender"]
-        ]
+        )
         cursor.execute(sql,values)
         
         self.connection.commit()
+        lastrowid = cursor.lastrowid
         self.closeAll
-        return cursor.lastrowid
+        return lastrowid
               
     # Function to get all records from the database rows
     def getAll(self):
@@ -79,24 +80,26 @@ class perfumeDAO:
         cursor.execute(sql,values)
         result = cursor.fetchone()
         self.closeAll()
-        return self.convertToDict(result)
+        if result:
+            return self.convertToDict(result)
+        else:
+            return None
 
     # Function to update existing record
     def update(self,data):
         cursor= self.getCursor()
-        sql = f"update {self.table} set Name = %s, Brand = %s, Size_ml = %s, Price_eur = %s, Gender = %s where id = %s;"
-        values = [          
+        sql = "UPDATE perfumes SET Name = %s, Brand = %s, Size_ml = %s, Price_eur = %s, Gender = %s WHERE id = %s"
+        values = (          
             data["Name"],
             data["Brand"],
             data["Size_ml"],
             data["Price_eur"],
             data["Gender"],
             data["id"]          
-        ]
+        )
         cursor.execute(sql,values)
         self.connection.commit()
         self.closeAll()
-        return data
 
     # Function to delete a record
     def delete(self,id):
