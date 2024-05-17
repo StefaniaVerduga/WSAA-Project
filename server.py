@@ -1,7 +1,7 @@
 # Flask server that links to a DAO
 # Author: Stefania Verduga
 
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, send_file, redirect
 from perfumesdao import perfumeDAO as dao
 
 app = Flask(__name__, static_url_path="", static_folder="staticpages")
@@ -9,11 +9,11 @@ app = Flask(__name__, static_url_path="", static_folder="staticpages")
 # Function root to home page
 @app.route("/")
 def home():
-    return "Welcome to the perfumes' world!"
+    return send_file("perfumes.html")
 
 # Gets all data from the database
 # curl http://127.0.0.1:5000/perfumes
-@app.route('/perfumes')
+@app.route("/perfumes")
 def getAll():
     return jsonify(dao.getAll())
 
@@ -25,49 +25,49 @@ def findByID(id):
 
 # Add new record to the database
 # curl -X POST -H "Content-Type: application/json" -d "{\"Brand\":\"CK\", \"Gender\":\"F\", \"Name\":\"Eternity\", \"Price_eur\":36, \"Size_ml\":100}" http://127.0.0.1:5000/perfumes
-@app.route('/perfumes', methods=['POST'])
+@app.route("/perfumes", methods=['POST'])
 def createPerfume():
     if not request.json:
-        abort(400)
+        return jsonify({"error": "Bad Request"}), 400
     data = {
-        "Name": request.json["Name"],
-        "Brand": request.json["Brand"],
-        "Size_ml": request.json["Size_ml"],
-        "Price_eur": request.json["Price_eur"],
-        "Gender": request.json["Gender"]
+        "Name": request.json.get("Name"),
+        "Brand": request.json.get("Brand"),
+        "Size_ml": request.json.get("Size_ml"),
+        "Price_eur": request.json.get("Price_eur"),
+        "Gender": request.json.get("Gender")
     }
-    return jsonify(dao.create(data))
+    perfume_id = dao.create(data)
+    if perfume_id:
+        return jsonify({"id": perfume_id}), 201
+    else:
+        return jsonify({"error": "Failed to create perfume"}), 500
 
 # Update database from the webpage
 # curl -X PUT -H "Content-Type: application/json" -d "{\"Brand\":\"CK\", \"Gender\":\"F\", \"Name\":\"Eternity\", \"Price_eur\":36, \"Size_ml\":85}" http://127.0.0.1:5000/perfumes/11
-@app.route('/perfumes/<id>', methods=['PUT'])
+@app.route("/perfumes/<int:id>", methods=['PUT'])
 def updatePerfume(id):
     foundPerfume = dao.findById(id)
-    if len(foundPerfume) == 0:
-        return jsonify({}), 404
-    currentPerfume = foundPerfume
-    if "Name" in request.json:
-        currentPerfume["Name"] = request.json["Name"]
-    if "Brand" in request.json:
-        currentPerfume["Brand"] = request.json["Brand"]
-    if "Size_ml" in request.json:
-        currentPerfume["Size_ml"] = request.json["Size_ml"]
-    if "Price_eur" in request.json:
-        currentPerfume["Price_eur"] = request.json["Price_eur"]
-    if "Gender" in request.json:
-        currentPerfume["Gender"] = request.json["Gender"]
-    dao.update(currentPerfume)
-    return jsonify(currentPerfume)
+    if foundPerfume is None:
+        return jsonify({"error": "Perfume not found"}), 404
+    
+    foundPerfume["Name"] = request.json.get("Name", foundPerfume["Name"])
+    foundPerfume["Brand"] = request.json.get("Brand", foundPerfume["Brand"])
+    foundPerfume["Size_ml"] = request.json.get("Size_ml", foundPerfume["Size_ml"])
+    foundPerfume["Price_eur"] = request.json.get("Price_eur", foundPerfume["Price_eur"])
+    foundPerfume["Gender"] = request.json.get("Gender", foundPerfume["Gender"])
+
+    dao.update(foundPerfume)
+    return jsonify(foundPerfume), 200
 
 # Delete by id
 # curl -X DELETE  http://127.0.0.1:5000/perfumes/11
-@app.route('/perfumes/<id>', methods=['DELETE'])
+@app.route("/perfumes/<int:id>", methods=['DELETE'])
 def deletePerfume(id):
     foundPerfume = dao.findById(id)
-    if len(foundPerfume) == 0:
-        return jsonify({}), 404
+    if not foundPerfume:
+        return jsonify({"error": "Perfume not found"}), 404
     dao.delete(id)
-    return jsonify({"done": True})
+    return jsonify({"success": True}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
