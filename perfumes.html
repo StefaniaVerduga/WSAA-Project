@@ -130,6 +130,56 @@
             form.querySelector('input[name="gender"]').value = perfume.Gender;
         }
 
+        // Function to add a new perfume to the table
+        function addPerfumeToTable(perfume){
+            var tableElement = document.getElementById('perfumeTable');
+            var rowElement = tableElement.insertRow(-1);
+            rowElement.setAttribute('id', perfume.id);
+
+            // Insert cells with perfume details
+            var cell1 = rowElement.insertCell(0);
+            cell1.innerHTML = perfume.id;
+            var cell2 = rowElement.insertCell(1);
+            cell2.innerHTML = perfume.Name;
+            var cell3 = rowElement.insertCell(2);
+            cell3.innerHTML = perfume.Brand;
+            var cell4 = rowElement.insertCell(3);
+            cell4.innerHTML = perfume.Size_ml;
+            var cell5 = rowElement.insertCell(4);
+            cell5.innerHTML = perfume.Price_eur;
+            var cell6 = rowElement.insertCell(5);
+            cell6.innerHTML = perfume.Gender;
+            var cell7 = rowElement.insertCell(6);
+            // Buttons for updating and deleting the perfume
+            cell7.innerHTML = '<button onclick="showUpdate(this)">Update</button>';
+            var cell8 = rowElement.insertCell(7);
+            cell8.innerHTML = '<button onclick="doDelete(this)">Delete</button>';
+        }
+
+         // Function to create a new perfume
+        function doCreate() {
+            var perfume = getPerfumeFromForm();
+
+            // AJAX call to send the perfume data to the server
+            $.ajax({
+                type: 'POST',
+                url: '/perfumes',
+                contentType: 'application/json',
+                data: JSON.stringify(perfume),
+                success: function(response) {
+                    alert('Perfume created successfully!');
+                    perfume.id = response.id;
+                    // Add the new perfume to the table
+                    addPerfumeToTable(perfume);
+                    // Show the table and clear the form
+                    showViewall();
+                    clearForm();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert('Failed to create perfume. Error: ' + textStatus + ', ' + errorThrown);
+                }
+            });
+        }
     </script>
 </body>
 </html>
