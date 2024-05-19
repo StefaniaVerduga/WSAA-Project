@@ -180,6 +180,82 @@
                 }
             });
         }
+
+        // Function to update an existing perfume
+        function doUpdate() {
+            var perfume = getPerfumeFromForm();
+            if (!perfume.id) {
+                alert('Error: No perfume ID provided.');
+                return;
+            }
+
+            console.log("Updating perfume with ID: ", perfume.id);
+
+            // AJAX call to update the perfume data on the server
+            $.ajax({
+                type: 'PUT',
+                url: '/perfumes/' + perfume.id,
+                contentType: 'application/json',
+                data: JSON.stringify(perfume),
+                success: function(response) {
+                    alert('Perfume updated successfully!');
+                    // Update the perfume details in the table
+                    updateRowInTable(perfume);
+                    // Show the table and clear the form
+                    showViewall();
+                    clearForm();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert('Failed to update perfume. Error: ' + textStatus + ', ' + errorThrown);
+                }
+            });
+        }
+
+        // Function to update the perfume details in the table
+        function updateRowInTable(perfume) {
+            var row = document.getElementById(perfume.id);
+            if (row) {
+                row.cells[1].textContent = perfume.Name;
+                row.cells[2].textContent = perfume.Brand;
+                row.cells[3].textContent = perfume.Size_ml;
+                row.cells[4].textContent = perfume.Price_eur;
+                row.cells[5].textContent = perfume.Gender;
+            } else {
+                console.log('Error: Row with ID ' + perfume.id + ' not found.');
+            }
+        }
+
+        // Function to delete a perfume
+        function doDelete(buttonElement) {
+            var rowElement = buttonElement.parentNode.parentNode;
+            var id = rowElement.getAttribute("id");
+           
+            // AJAX call to delete the perfume from the server
+            $.ajax({
+                type: 'DELETE',
+                url: '/perfumes/' + id,
+                success: function() {
+                    alert('Perfume deleted successfully!');
+                    // Remove the perfume from the table
+                    rowElement.remove();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert('Failed to delete perfume. Error: ' + textStatus + ', ' + errorThrown);
+                }
+            });
+        }
+
+        // Function to extract perfume details from a table row
+        function getPerfumeFromRow(rowElement) {
+            var perfume = {};
+            perfume.id = rowElement.cells[0].textContent;
+            perfume.Name = rowElement.cells[1].textContent;
+            perfume.Brand = rowElement.cells[2].textContent;
+            perfume.Size_ml = rowElement.cells[3].textContent;
+            perfume.Price_eur = rowElement.cells[4].textContent;
+            perfume.Gender = rowElement.cells[5].textContent;
+            return perfume;
+        }
     </script>
 </body>
 </html>
